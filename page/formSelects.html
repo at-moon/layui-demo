@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>下拉多选</title>
+    <link rel="stylesheet" href="../res/layui-ext/formSelects/formSelects-v4.css" />
+    <link rel="stylesheet" href="../res/layui/css/layui.css">
+</head>
+<body>
+<form class="layui-form" action="">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否支持邮寄</label>
+        <div class="layui-input-block">
+            <input lay-filter="canPost" type="radio" name="sex" title="是" checked value="1">
+            <input lay-filter="canPost" type="radio" name="sex" title="否" value="0">
+        </div>
+    </div>
+    <div id="mailAddress" class="layui-form-item">
+        <label class="layui-form-label">邮寄地址</label>
+        <div class="layui-input-block">
+            <select name="mailAddress" lay-verify="required" xm-select="select1" xm-select-search="">
+                <option value="1" disabled="disabled">邮寄地址1</option>
+                <option value="2">邮寄地址2</option>
+                <option value="3">邮寄地址3</option>
+                <option value="4" selected="selected">邮寄地址4</option>
+                <option value="5">邮寄地址5</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script src="../res/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    //全局定义一次, 加载formSelects
+    layui.config({
+        //此处路径请自行处理, 可以使用绝对路径
+        base: '../res/layui-ext/formSelects/'
+    }).extend({
+        formSelects: 'formSelects-v4'
+    });
+    //加载模块
+    layui.use(['form', 'formSelects'], function(){
+        let formSelects = layui.formSelects
+            ,form = layui.form
+            ,$ = layui.$;
+
+        // 初始化下拉多选控件
+        formSelects.config('select1', {
+            type: 'get',				//请求方式: post, get, put, delete...
+            delay: 500,					//搜索延迟时间, 默认停止输入500ms后开始搜索
+            direction: 'auto',			//多选下拉方向, auto|up|down
+            clearInput: false, 			//当有搜索内容时, 点击选项是否清空搜索内容, 默认不清空
+        }, true);
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('radio(canPost)',function (data) {
+            if (data.value === '0') {
+                $('#mailAddress').hide();
+                $(".xm-hide-input").removeAttr("lay-verify");
+            } else {
+                $('#mailAddress').show();
+                $(".xm-hide-input").attr("lay-verify", "required");
+            }
+        });
+    });
+</script>
+</body>
+</html>

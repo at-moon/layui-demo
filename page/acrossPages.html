@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>列表跨页多选</title>
+    <link rel="stylesheet" href="../res/layui/css/layui.css">
+
+</head>
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script src="../res/layui/layui.js"></script>
+<script>
+    layui.use('table', function () {
+        let table = layui.table
+            , form = layui.form
+            , $ = layui.$;
+
+        // 设置全局变量以保存选中行信息
+        let ids = new Array();
+        // 保存当前页全部数据id，点击全选时使用
+        let tableIds = new Array();
+
+        table.render({
+            elem: '#test'
+            , url: '/demo/girl/list/'
+            , cols: [[
+                {type: 'checkbox', width: 70}
+                , {field: 'id', title: 'ID'}
+                , {field: 'age', title: '年龄'}
+                , {field: 'city', title: '城市'}
+            ]]
+            , request: {
+                pageName: 'current' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , page: true
+            , done: function (res) {
+                // 设置当前页全部数据id到全局变量
+                tableIds = res.data.map(function (value) {
+                    return value.id;
+                });
+                // 设置当前页选中项
+                $.each(res.data, function (idx, val) {
+                    if (ids.indexOf(val.id) > -1) {
+                        val["LAY_CHECKED"] = 'true';
+                        //找到对应数据改变勾选样式，呈现出选中效果
+                        let index = val['LAY_TABLE_INDEX'];
+                        $('tr[data-index=' + index + '] input[type="checkbox"]').click();
+                        form.render('checkbox'); //刷新checkbox选择框渲染
+                    }
+                });
+                // 获取表格勾选状态，全选中时设置全选框选中
+                let checkStatus = table.checkStatus('test');
+                if (checkStatus.isAll) {
+                    $('.layui-table-header th[data-field="0"] input[type="checkbox"]').prop('checked', true);
+                    form.render('checkbox'); //刷新checkbox选择框渲染
+                }
+            }
+        });
+
+
+        // 监听勾选事件
+        table.on('checkbox(test)', function (obj) {
+            if (obj.checked == true) {
+                if (obj.type == 'one') {
+                    ids.push(obj.data.id);
+                } else {
+                    for (let i = 0; i < tableIds.length; i++) {
+                        //当全选之前选中了部分行进行判断，避免重复
+                        if (ids.indexOf(tableIds[i]) == -1) {
+                            ids.push(tableIds[i]);
+                        }
+                    }
+                }
+            } else {
+                if (obj.type == 'one') {
+                    let i = ids.length;
+                    while (i--) {
+                        if (ids[i] == obj.data.id) {
+                            ids.splice(i, 1);
+                        }
+                    }
+                } else {
+                    let i = ids.length;
+                    while (i--) {
+                        if (tableIds.indexOf(ids[i]) != -1) {
+                            ids.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

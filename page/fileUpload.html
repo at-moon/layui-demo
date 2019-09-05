@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+    <link rel="stylesheet" href="../res/layui/css/layui.css">
+</head>
+<body>
+<button type="button" class="layui-btn" id="test1">
+    <i class="layui-icon">&#xe67c;</i>上传图片
+</button>
+<img hidden src=""  height="200" width="200">
+
+<script src="../res/layui/layui.js"></script>
+<script>
+    layui.use('upload', function () {
+        let upload = layui.upload
+            , $ = layui.$;
+
+        //执行实例
+        let uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/demo/girl/upload' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+                $('img').attr('src',res.path);
+                $('img').show();
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
+</script>
+</body>
+</html>

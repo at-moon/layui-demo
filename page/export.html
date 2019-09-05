@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>下载文档/在线预览</title>
+    <script src="../res/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+<button onclick="downWord()">下载文档</button>
+<button onclick="printView()">在线预览</button>
+</body>
+
+
+<script>
+    function downWord() {
+        let data = {
+            'id': '111',
+            'name': 'polaris',
+            'birth': {
+                'year': '1999',
+                'month': '1',
+                'day': '1'
+            }
+        };
+        hiddenForm('/demo/girl/downWord', JSON.stringify(data));
+    }
+
+    function printView() {
+        let data = {
+            'id': '111',
+            'name': 'polaris',
+            'birth': {
+                'year': '1997',
+                'month': '1',
+                'day': '1'
+            }
+        };
+        hiddenForm('/demo/girl/onlinePreview', JSON.stringify(data));
+    }
+
+    //创建隐藏表单提交请求下载文件
+    function hiddenForm(url, formData) {
+        //创建form
+        let form = $("<form></form>");
+        //设置属性
+        form.attr("action", url);
+        form.attr("method", "post");
+        form.attr("target", "_blank");//打开新页面
+        //创建input，即参数
+        let data = $("<input type='text' name='data'/>");
+        data.attr("value", formData);
+        //注入参数到表单
+        form.append(data);
+        form.appendTo("body");
+        form.hide();
+        //提交表单
+        form.submit();
+    }
+</script>
+</html>
